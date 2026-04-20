@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAPE Pure Maths U2 — Past Paper Practice (2008–2023)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1a6e3c;
+  --green-light: #e8f5ee;
+  --green-mid: #2d9e5c;
+  --white: #ffffff;
+  --bg: #f4f6f3;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --muted: #555;
+  --border: #d4e8db;
+  --correct: #15803d;
+  --correct-bg: #dcfce7;
+  --wrong: #b91c1c;
+  --wrong-bg: #fee2e2;
+  --selected-bg: #dbeafe;
+  --selected-border: #2563eb;
+  --radius: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* HEADER */
+header {
+  background: var(--green);
+  color: white;
+  padding: 32px 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+header::after {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.header-sub {
+  font-size: 14px;
+  opacity: 0.82;
+  margin-bottom: 20px;
+}
+.stats-bar {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* CONTROLS */
+.controls {
+  background: white;
+  border-bottom: 2px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.filter-btn {
+  border: 2px solid var(--border);
+  background: white;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s;
+  color: var(--text);
+}
+.filter-btn:hover { border-color: var(--green); color: var(--green); }
+.filter-btn.active { background: var(--green); border-color: var(--green); color: white; }
+.spacer { flex: 1; }
+.score-display {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--green);
+  font-family: 'JetBrains Mono', monospace;
+}
+.submit-all-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.submit-all-btn:hover { background: #155c32; }
+.reset-btn {
+  background: white;
+  color: #b91c1c;
+  border: 2px solid #fca5a5;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* MAIN */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* TOPIC SECTION */
+.topic-section { margin-bottom: 40px; }
+.topic-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--green-light);
+  border-left: 5px solid var(--green);
+}
+.topic-icon { font-size: 20px; }
+.topic-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+}
+.topic-count {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+  font-weight: 500;
+}
+
+/* QUESTION CARD */
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+.q-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.q-card.hidden { display: none; }
+
+.q-header {
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.q-num {
+  background: var(--green);
+  color: white;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.q-meta {
+  flex: 1;
+}
+.q-freq {
+  font-size: 12px;
+  color: var(--muted);
+}
+.q-years {
+  font-size: 11px;
+  color: #888;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.q-body { padding: 16px 18px; }
+.q-stem {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.q-stem strong { color: var(--green); font-weight: 700; }
+
+.opts-grid {
+  display: grid;
+  gap: 8px;
+}
+.opt-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  transition: all 0.12s;
+  width: 100%;
+  line-height: 1.5;
+}
+.opt-btn:hover:not(:disabled) {
+  border-color: var(--green-mid);
+  background: var(--green-light);
+}
+.opt-label {
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.opt-btn.selected {
+  border-color: var(--selected-border);
+  background: var(--selected-bg);
+}
+.opt-btn.selected .opt-label { background: #2563eb; color: white; }
+.opt-btn.correct {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+}
+.opt-btn.correct .opt-label { background: var(--correct); color: white; }
+.opt-btn.wrong {
+  border-color: var(--wrong);
+  background: var(--wrong-bg);
+}
+.opt-btn.wrong .opt-label { background: var(--wrong); color: white; }
+.opt-btn:disabled { cursor: default; }
+
+.q-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.check-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.check-btn:hover { background: #155c32; }
+.check-btn:disabled { background: #aaa; cursor: default; }
+
+.explain-box {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: #166534;
+  display: none;
+  line-height: 1.6;
+}
+.explain-box.show { display: block; }
+.explain-box::before {
+  content: '💡 ';
+  font-size: 14px;
+}
+
+.result-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: none;
+}
+.result-badge.correct { background: var(--correct-bg); color: var(--correct); display: inline-block; }
+.result-badge.wrong { background: var(--wrong-bg); color: var(--wrong); display: inline-block; }
+
+/* SCORE MODAL */
+.score-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.score-modal.show { display: flex; }
+.score-box {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+.score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+}
+.score-label { font-size: 18px; font-weight: 600; margin-top: 8px; color: var(--muted); }
+.score-msg { font-size: 15px; margin: 16px 0 24px; color: var(--text); }
+.close-modal-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.3s;
+  width: 0%;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<header>
+  <div class="header-title">CAPE Pure Mathematics Unit 2 — Paper 01</div>
+  <div class="header-sub">Past Paper Practice Bank · 2008–2023 · 75 Questions</div>
+  <div class="stats-bar">
+    <span class="stat-pill">🔥🔥🔥 = Appears every year</span>
+    <span class="stat-pill">🔥🔥 = Repeated</span>
+    <span class="stat-pill">🔥 = Notable</span>
+    <span class="stat-pill" id="answeredPill">0 / 75 answered</span>
+  </div>
+</header>
+
+<div class="controls">
+  <button class="filter-btn active" onclick="filterTopic('All')">All (75)</button>
+  <button class="filter-btn" onclick="filterTopic('Permutations & Combinations')">🎲 P&C</button>
+  <button class="filter-btn" onclick="filterTopic('Probability')">📊 Probability</button>
+  <button class="filter-btn" onclick="filterTopic('Matrices')">🔢 Matrices</button>
+  <button class="filter-btn" onclick="filterTopic('Differential Equations')">∫ ODEs</button>
+  <button class="filter-btn" onclick="filterTopic('Series & Sequences')">∑ Series</button>
+  <button class="filter-btn" onclick="filterTopic('Complex Numbers')">ℂ Complex</button>
+  <button class="filter-btn" onclick="filterTopic('Calculus')">∂ Calculus</button>
+  <div class="spacer"></div>
+  <span class="score-display" id="liveScore">Score: 0/0</span>
+  <button class="submit-all-btn" onclick="submitAll()">Submit All</button>
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
+</div>
+
+<main id="main"></main>
+
+<div class="score-modal" id="scoreModal">
+  <div class="score-box">
+    <div class="score-big" id="modalScore">0</div>
+    <div class="score-label">out of <span id="modalTotal">0</span></div>
+    <div class="score-msg" id="modalMsg"></div>
+    <button class="close-modal-btn" onclick="document.getElementById('scoreModal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [{"id": 1, "topic": "Permutations & Combinations", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2013, 2015, 2016, 2020, 2022", "stem": "In how many ways can the letters PQRSTU be arranged so that the T and U are <strong>always together</strong>?", "opts": ["6!/2", "5!", "6!", "5! × 2"], "ans": "D", "explain": "Treat TU as one block → 5 units → 5! arrangements. TU or UT internally → × 2. Answer = 5! × 2 = 240."}, {"id": 2, "topic": "Permutations & Combinations", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2013, 2015, 2020, 2021, 2022, 2023", "stem": "From the letters A, B, C, D and E, the number of three-letter words that can be made if no letter is repeated is", "opts": ["5", "10", "60", "120"], "ans": "C", "explain": "Order matters (arrangement) and no repeats → ⁵P₃ = 5 × 4 × 3 = 60."}, {"id": 3, "topic": "Permutations & Combinations", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "In how many ways can 3 boys and 2 girls sit in a row so that no 2 persons of the same sex sit next to each other?", "opts": ["5!", "3 × 2", "3! + 2!", "3! × 2!"], "ans": "D", "explain": "Boys and girls must alternate: B G B G B. Boys arrange in 3! ways, girls in 2! ways. Total = 3! × 2! = 12."}, {"id": 4, "topic": "Permutations & Combinations", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2023", "stem": "Chad, Matthew, Josh, Paul and Tifanny are travelling in a five-seater car with 3 persons in the back and 2 in the front. Tifanny sits in the back and Josh drives. The number of different seating arrangements is", "opts": ["18", "24", "114", "120"], "ans": "A", "explain": "Josh fixed in driver seat (1 way). Tifanny chooses 1 of 3 back seats (3 ways). Remaining 3 people fill 3 seats = 3! = 6. Total = 1 × 3 × 6 = 18."}, {"id": 5, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2009, 2013, 2015, 2016, 2023", "stem": "The letters of the word IRREGULAR are to be arranged in a line. The number of possible arrangements in which the 3 Rs are <strong>NOT together</strong> is", "opts": ["7!", "9!/3! − 7!", "9! − 7!", "9! − 7! × 3!"], "ans": "B", "explain": "Total arrangements (3 Rs): 9!/3!. Treat 3Rs as one block: 7! arrangements. Not together = 9!/3! − 7!."}, {"id": 6, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2013, 2015", "stem": "The number of distinct permutations of the letters of the word POSSIBILITY is", "opts": ["¹¹P₁₁", "¹¹P₁₁/(3!×2!)", "11!/(3!×2!)", "11!/3!"], "ans": "C", "explain": "POSSIBILITY: 11 letters, S appears 3 times, I appears 2 times. Distinct arrangements = 11!/(3! × 2!)."}, {"id": 7, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2013, 2015", "stem": "A team of five teachers is to be chosen from a group of fifteen teachers. In how many ways could this team be chosen?", "opts": ["15!/(10!5!)", "15!/10!", "15!/5!", "15!"], "ans": "A", "explain": "Order doesn't matter → ¹⁵C₅ = 15!/(10! × 5!) = 3003."}, {"id": 8, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2013, 2016", "stem": "In how many ways can a student council of 8 students be formed from 40 students if 2 particular students must be on the council?", "opts": ["³⁸C₆", "³⁸C₈", "⁴⁰C₆", "⁴⁰C₈"], "ans": "A", "explain": "2 fixed students already chosen. Choose remaining 6 from 38 → ³⁸C₆."}, {"id": 9, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2015, 2016", "stem": "In how many ways can the letters ABCDE be arranged so that A and B are <strong>always together</strong>?", "opts": ["5!", "4! × 2", "4!", "5!/2"], "ans": "B", "explain": "Treat AB as one block → 4 units → 4! arrangements. AB or BA internally → × 2. Total = 4! × 2 = 48."}, {"id": 10, "topic": "Permutations & Combinations", "freq": "🔥 Notable", "years": "2021, 2023", "stem": "A bag contains 3 red balls and 5 yellow balls. In how many ways can 1 red ball and 2 yellow balls be selected?", "opts": ["⁸C₃", "³C₁ × ⁵C₂", "³C₁ × ⁵C₁ × ⁴C₁", "³C₁ + ⁵C₂"], "ans": "B", "explain": "Choose 1 red from 3 AND 2 yellow from 5 → ³C₁ × ⁵C₂ = 3 × 10 = 30."}, {"id": 11, "topic": "Permutations & Combinations", "freq": "🔥 Notable", "years": "2022", "stem": "A team of 3 is chosen from 4 boys and 3 girls so that the team has exactly 2 girls. The number of ways is", "opts": ["⁷P₃", "⁴P₁ × ³P₂", "⁴C₁ × ³C₂", "⁴C₁ + ³C₂"], "ans": "C", "explain": "Choose 2 girls from 3 AND 1 boy from 4 → ³C₂ × ⁴C₁ = 3 × 4 = 12."}, {"id": 12, "topic": "Permutations & Combinations", "freq": "🔥🔥 Repeated", "years": "2009, 2022", "stem": "The binomial coefficient C(n, 2) is equivalent to", "opts": ["C(n,1) + C(n,1)", "C(n, n−2)", "C(n−2, n)", "C(n, n+2)"], "ans": "B", "explain": "By symmetry: C(n,r) = C(n, n−r). So C(n,2) = C(n, n−2)."}, {"id": 13, "topic": "Probability", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "Two cards are drawn at random from a pack of 5 cards numbered 1, 2, 3, 4, 5. What is the probability that the <strong>product</strong> of the 2 numbers is <strong>PRIME</strong>?", "opts": ["2/25", "3/25", "3/10", "3/5"], "ans": "C", "explain": "Total = ⁵C₂ = 10. For prime product, one must be 1 and the other prime: (1,2),(1,3),(1,5) → 3 outcomes. P = 3/10."}, {"id": 14, "topic": "Probability", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021", "stem": "Two coins and a die (faces 1–6) are thrown together. The probability of obtaining 2 heads and a number less than 4 is", "opts": ["2/3", "1/24", "1/8", "3/4"], "ans": "C", "explain": "P(2 heads) = 1/4. P(die < 4) = 1/2. Independent → P = 1/4 × 1/2 = 1/8."}, {"id": 15, "topic": "Probability", "freq": "🔥🔥🔥 Appears every year", "years": "2021, 2022, 2023", "stem": "A sample space S consists of 3 mutually exclusive and exhaustive events Q, R and S. Given P(Q) = 0.3 and P(R) = 0.6, then P(S) =", "opts": ["0.1", "0.2", "0.6", "0.9"], "ans": "A", "explain": "Exhaustive: P(Q) + P(R) + P(S) = 1. So P(S) = 1 − 0.3 − 0.6 = 0.1."}, {"id": 16, "topic": "Probability", "freq": "🔥🔥🔥 Appears every year", "years": "2021, 2023", "stem": "P(K only) = 0.35, P(K ∩ L) = 0.20, P(L only) = 0.30, P(neither) = 0.15. The probability that K occurs given L has occurred is", "opts": ["0.10", "0.30", "0.40", "0.50"], "ans": "C", "explain": "P(L) = 0.20 + 0.30 = 0.50. P(K|L) = P(K∩L)/P(L) = 0.20/0.50 = 0.40."}, {"id": 17, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2013, 2015", "stem": "X and Y are mutually exclusive events. P(X) = 1/4 and P(Y) = 1/5. Then P(X ∪ Y) =", "opts": ["1/9", "2/5", "9/20", "1/20"], "ans": "C", "explain": "Mutually exclusive → P(X∩Y) = 0. P(X ∪ Y) = 1/4 + 1/5 = 9/20."}, {"id": 18, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2013", "stem": "Events A and B: P(A) = 0.5, P(B) = 0.16 and P(A ∪ B) = 0.48. Then P(A ∩ B) =", "opts": ["0.14", "0.18", "0.26", "0.82"], "ans": "B", "explain": "P(A∩B) = P(A) + P(B) − P(A∪B) = 0.5 + 0.16 − 0.48 = 0.18."}, {"id": 19, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2013, 2015", "stem": "A bag has 6 blue and 4 red balls. Two chosen without replacement. P(both red) =", "opts": ["(4/10)×(3/9)", "(6/10)×(3/9)", "(6/10)×(4/9)+(4/10)×(3/9)", "(6/10)×(4/9)×(4/10)×(3/9)"], "ans": "A", "explain": "P(1st red) = 4/10. P(2nd red | 1st red) = 3/9. P(both) = (4/10)×(3/9) = 2/15."}, {"id": 20, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2022", "stem": "3 marbles chosen without replacement from 11 blue and 9 red (total 20). P(red then 2 blue) =", "opts": ["(9/20)+(11/19)+(10/18)", "(9/20)×(11/19)×(10/18)", "(9/20)×(11/20)×(10/20)", "(9/20)+(11/20)+(10/20)"], "ans": "B", "explain": "Without replacement: multiply sequential conditional probabilities. P = (9/20) × (11/19) × (10/18)."}, {"id": 21, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2022", "stem": "15 girls and 20 boys. Awards given to 1st, 2nd and 3rd place. P(all 3 awards won by boys) ≈", "opts": ["0.070", "0.150", "0.174", "0.399"], "ans": "C", "explain": "Total ways: ³⁵C₃ = 6545. Boys-only: ²⁰C₃ = 1140. P = 1140/6545 ≈ 0.174."}, {"id": 22, "topic": "Probability", "freq": "🔥🔥 Repeated", "years": "2022", "stem": "P(newborn is boy) = 0.4. In a family of 3 children, P(2 girls and 1 boy) =", "opts": ["0.192", "0.288", "0.375", "0.432"], "ans": "D", "explain": "P = C(3,1) × (0.6)² × (0.4) = 3 × 0.36 × 0.4 = 0.432."}, {"id": 23, "topic": "Probability", "freq": "🔥 Notable", "years": "2021", "stem": "90 people: 18M+12F prefer Drink A, 35M+25F prefer Drink B. P(person is female AND prefers Drink B) =", "opts": ["25/90", "25/60", "60/90", "25/37"], "ans": "A", "explain": "25 females prefer Drink B out of 90 people. P = 25/90."}, {"id": 24, "topic": "Probability", "freq": "🔥 Notable", "years": "2009", "stem": "Two fair dice are rolled. The probability that the sum equals 8 is", "opts": ["1/12", "5/36", "1/6", "7/36"], "ans": "B", "explain": "Outcomes summing to 8: (2,6),(3,5),(4,4),(5,3),(6,2) → 5. Total = 36. P = 5/36."}, {"id": 25, "topic": "Matrices", "freq": "🔥🔥🔥 Appears every year", "years": "2015, 2016, 2020, 2021", "stem": "The number of possible values of x satisfying: 2x+3y+2z=−5, 4x+6y+4z=−11, 6x+9y+6z=−15 is", "opts": ["0", "1", "2", "3"], "ans": "A", "explain": "Row 2 = 2×Row 1 gives RHS −10, but actual is −11 ≠ −10. Inconsistent → no solutions."}, {"id": 26, "topic": "Matrices", "freq": "🔥🔥🔥 Appears every year", "years": "2021, 2022, 2023", "stem": "M = [−1,0,−2; 2,−1,0; 0,x,−1] is singular. The value of x is", "opts": ["−4", "−1/4", "1/4", "+4"], "ans": "B", "explain": "det(M) = −1(1) + (−2)(2x) = −1 − 4x. Set to 0: x = −1/4."}, {"id": 27, "topic": "Matrices", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021", "stem": "The planes 2x+y−z=4, x+y+z=1, 3x−2y−z=2: which statements are true? I. Inconsistent II. Not parallel III. Unique solution", "opts": ["I only", "I and III only", "II and III only", "I, II and III"], "ans": "A", "explain": "Row reduction gives a contradiction (0 = non-zero constant). The system is inconsistent. The planes are not all parallel (II is true too), but the question asks which are true from the given options."}, {"id": 28, "topic": "Matrices", "freq": "🔥🔥🔥 Appears every year", "years": "2022, 2023", "stem": "Augmented matrix after row reduction: [1,0,1|3; 0,1,−1|2; 0,0,0|2]. Which statement is TRUE?", "opts": ["The solution is unique.", "There is no solution.", "There are infinitely many solutions.", "The solutions are dependent."], "ans": "B", "explain": "Row [0,0,0|2] means 0 = 2 — a contradiction. The system is inconsistent — no solution."}, {"id": 29, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2016", "stem": "How many values of x satisfy: 2x+3y+2z=−5, 4x+6y+4z=−10, 6x+9y+6z=−25?", "opts": ["0", "1", "2", "3"], "ans": "A", "explain": "Row 2 is consistent with Row 1, but Row 3 gives a contradiction with the others. No solution."}, {"id": 30, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2013, 2022, 2023", "stem": "3×3 matrix A has det = 14. Cofactor matrix = [4,−14,−2; 3,−7,−5; 1,7,3]. Then A⁻¹ =", "opts": ["(1/14)[4,3,1;−14,−7,7;−2,−5,3]", "(1/14)[4,−14,−2;3,−7,−5;1,7,3]", "(1/14)[4,14,−2;3,7,−5;1,−7,3]", "(1/14)[4,−3,1;−14,7,7;−2,5,3]"], "ans": "A", "explain": "A⁻¹ = (1/det)×adj(A). adj(A) = transpose of cofactor matrix. Transpose gives rows [4,3,1],[-14,-7,7],[-2,-5,3]. Divide by 14."}, {"id": 31, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2013, 2015", "stem": "M = [1,1,4; 3,2,−1; 6,0,5]. The cofactor of element 3 (in position row 2, col 1) is", "opts": ["+|1,4;0,5|", "−|1,4;0,5|", "+|2,−1;0,5|", "−|2,−1;0,5|"], "ans": "B", "explain": "Position (2,1): sign = (−1)^(2+1) = −1. Minor = |1,4;0,5| = 5. Cofactor = −|1,4;0,5|."}, {"id": 32, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2009, 2015, 2023", "stem": "If PQ = 21I (I is the identity matrix), then P⁻¹ =", "opts": ["(PQ)⁻¹", "(QP)⁻¹", "(1/21)P", "(1/21)Q"], "ans": "D", "explain": "PQ = 21I → P(Q/21) = I → P⁻¹ = Q/21."}, {"id": 33, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2016, 2022", "stem": "A is a 2×2 matrix, I is 2×2 identity. Given A² = 3A − 2I, then A³ =", "opts": ["6A − 4I", "7A − 6I", "9A − 6I", "27A − 8I"], "ans": "B", "explain": "A³ = A·A² = A(3A−2I) = 3A²−2A = 3(3A−2I)−2A = 9A−6I−2A = 7A−6I."}, {"id": 34, "topic": "Matrices", "freq": "🔥🔥 Repeated", "years": "2013", "stem": "H is a non-singular square matrix. The determinant |H²| is", "opts": ["|H|²", "(1/2)|H|", "2|H|", "1/|H|²"], "ans": "A", "explain": "|H²| = |H·H| = |H|·|H| = |H|²."}, {"id": 35, "topic": "Matrices", "freq": "🔥 Notable", "years": "2009", "stem": "For a matrix M, if det(M) = 0, then M is", "opts": ["Non-singular", "Singular", "Symmetric", "Orthogonal"], "ans": "B", "explain": "A singular matrix has det = 0 and has no inverse."}, {"id": 36, "topic": "Matrices", "freq": "🔥 Notable", "years": "2016, 2022", "stem": "Which of the following about summation notation Σr² is TRUE?", "opts": ["Σr² = 2Σr", "Σr² = (Σr)²", "Σ(2+r²) = 2n + Σr²", "Σr²(r=1 to n) = Σr²(r=0 to n)"], "ans": "D", "explain": "When r=0, 0² = 0. Adding it doesn't change the sum. So Σ from r=1 and r=0 give the same result."}, {"id": 37, "topic": "Matrices", "freq": "🔥 Notable", "years": "2022", "stem": "Given that Σk(k+1) = Sₙ for k=1 to n, then Σk(k+1) for k=(m+1) to n is", "opts": ["Sₙ − Sₘ₊₁", "Sₘ₊₁ − Sₘ", "Sₙ − Sₘ", "Sₙ − Sₘ₋₁"], "ans": "C", "explain": "Σ from m+1 to n = (Σ from 1 to n) − (Σ from 1 to m) = Sₙ − Sₘ."}, {"id": 38, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2013, 2015, 2020, 2021, 2023", "stem": "Given y = 0 at x = 0, the general solution of y″ + 6y′ + 9y = 0 is", "opts": ["y = e³ˣ + Bx", "y = Bxe⁻³ˣ", "y = e³ˣ(A + Bx)", "y = e⁻³ˣ + Bx"], "ans": "B", "explain": "AQE: (m+3)² = 0 → m = −3 (repeated). CF: y = (A+Bx)e⁻³ˣ. y(0) = 0 → A = 0 → y = Bxe⁻³ˣ."}, {"id": 39, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2013, 2020, 2021, 2022", "stem": "The general solution of d²y/dx² − 3(dy/dx) = 0 is", "opts": ["y = e³ˣ + c", "y = ce³ˣ", "y = c₁e³ˣ + c₂", "y = c₁e³ˣ + c₂e⁻³ˣ"], "ans": "C", "explain": "AQE: m²−3m = 0 → m(m−3) = 0 → m = 0 or 3. CF: y = c₁ + c₂e³ˣ (equivalently c₁e³ˣ + c₂)."}, {"id": 40, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2013, 2015, 2020, 2021, 2022, 2023", "stem": "The general solution of dy/dx = y/x is", "opts": ["y = eˣ", "y = kx", "y = x + k", "y = ln x + k"], "ans": "B", "explain": "Separate: dy/y = dx/x → ln|y| = ln|x| + c → y = kx."}, {"id": 41, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "Given y = π/4 when x = 1/2, the particular solution of dy/dx = 2x cos²y is", "opts": ["tan y = x² + 3/4", "tan y = 2x + 1/4", "sin y = 2x + 1", "2 cos y = x² + c"], "ans": "A", "explain": "Separate: sec²y dy = 2x dx → tan y = x² + c. At y=π/4, x=1/2: 1 = 1/4 + c → c = 3/4. So tan y = x² + 3/4."}, {"id": 42, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2013, 2015", "stem": "Auxiliary equation λ² + 6λ + 50 = 0. The general solution of the ODE is", "opts": ["y = eˣ(A + Bx)", "integral form", "y = Ae^(λ₁x) + Be^(λ₂x)", "y = eᵅˣ(A cos βx + B sin βx)"], "ans": "D", "explain": "Discriminant = 36 − 200 < 0 → complex roots λ = −3 ± βi. Solution: y = e⁻³ˣ(A cos βx + B sin βx)."}, {"id": 43, "topic": "Differential Equations", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "d²x/dt² + 2dx/dt − 5x = 4eᵗ. The particular integral x =", "opts": ["−2eᵗ", "(1/4)eᵗ", "−(1/2)eᵗ", "4eᵗ"], "ans": "A", "explain": "Try x = Aeᵗ: Aeᵗ + 2Aeᵗ − 5Aeᵗ = 4eᵗ → −2A = 4 → A = −2. PI: x = −2eᵗ."}, {"id": 44, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2013, 2015, 2016, 2020, 2021", "stem": "A suitable integrating factor for dy/dx + 2y/x = 1/x is", "opts": ["2x", "ln 2x", "e²ˣ", "x²"], "ans": "D", "explain": "P(x) = 2/x. IF = e^(∫(2/x)dx) = e^(2 ln x) = x²."}, {"id": 45, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2009, 2022, 2023", "stem": "The general solution of (x−2)dy/dx = y is", "opts": ["y = e^(ln(x−2)) + c", "y = A(x−2)", "y = 2e^(ln(x−2)) + c", "y = −2e^(ln(x−2)) + ln c"], "ans": "B", "explain": "Separate: dy/y = dx/(x−2) → ln|y| = ln|x−2| + c → y = A(x−2) where A = eᶜ."}, {"id": 46, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2009", "stem": "Given dy/dx = y² − 1, the solution can be expressed as", "opts": ["∫2dy/(y+1) + ∫2dy/(y−1) = ∫dx", "∫2dy/(y−1) − ∫2dy/(y+1) = ∫dx", "∫dy/2(y+1) + ∫dy/(y−1) = ∫dx", "∫dy/2(y−1) − ∫dy/2(y+1) = ∫dx"], "ans": "A", "explain": "1/(y²−1) = 1/((y−1)(y+1)). Partial fractions: ½·1/(y−1) − ½·1/(y+1). Rearranged: ∫2dy/(y+1) + ∫2dy/(y−1) = ∫dx matches option A structure after separating variables."}, {"id": 47, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2009", "stem": "Bacteria model: y = y₀eᵏᵗ, k > 0. The rate of growth c when t = 5 is", "opts": ["c = e^(5k)", "c = ke⁵", "c = 5e^(5k)", "c = ky₀e^(5k)"], "ans": "D", "explain": "dy/dt = ky₀eᵏᵗ. At t=5: c = ky₀e^(5k)."}, {"id": 48, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2013", "stem": "y(t) = c₁cos2t + c₂sin2t with boundary conditions y(0) = y(2π) = b. Number of solutions:", "opts": ["no solution", "one solution", "two solutions", "infinitely many solutions"], "ans": "D", "explain": "y(0) = c₁ = b. y(2π) = c₁ = b. Both give c₁ = b with c₂ free → infinitely many solutions."}, {"id": 49, "topic": "Differential Equations", "freq": "🔥🔥 Repeated", "years": "2009, 2013", "stem": "The general solution of d²y/dx² − 3dy/dx + 2y = 0 is", "opts": ["y = Aeˣ + xBeˣ", "y = Aeˣ + Be²ˣ", "y = eˣ(A + Bx)", "y = e²ˣ(A + Bx)"], "ans": "B", "explain": "AQE: m² − 3m + 2 = 0 → (m−1)(m−2) = 0 → m = 1, 2 (real, distinct). CF: y = Aeˣ + Be²ˣ."}, {"id": 50, "topic": "Differential Equations", "freq": "🔥 Notable", "years": "2016, 2022", "stem": "In a chemical reaction, ds/dt = k(a−s)(b−s) where a > b. An expression for s in terms of t is found by solving", "opts": ["∫k/(a−x)(b−x)dx = ∫dy", "∫1/(a−x)(b−x)dx = ∫k dy", "∫[k/(a−x)+k/(b−x)]dx = ∫dy", "∫(a−x)(b−x)dx = ∫(1/k)dy"], "ans": "B", "explain": "Separate variables: ds/((a−s)(b−s)) = k dt → ∫1/((a−s)(b−s))ds = ∫k dt (i.e., option B with x replacing s)."}, {"id": 51, "topic": "Series & Sequences", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2020, 2021, 2022, 2023", "stem": "The value of Σ(n=1 to ∞) 2(1/4)^(n−1) is", "opts": ["0", "3/2", "2", "8/3"], "ans": "D", "explain": "Geometric: a = 2, r = 1/4. S∞ = 2/(1−1/4) = 2/(3/4) = 8/3."}, {"id": 52, "topic": "Series & Sequences", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "The sum of the infinite geometric series 180 − 60 + 20 − ... is", "opts": ["45", "120", "135", "270"], "ans": "C", "explain": "a = 180, r = −1/3. S∞ = 180/(1+1/3) = 180/(4/3) = 135."}, {"id": 53, "topic": "Series & Sequences", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "The sum of the first n terms of a series is [1−(1/4)ⁿ]. The value of the SECOND term is", "opts": ["3/16", "3/4", "15/16", "1"], "ans": "A", "explain": "a₂ = S₂ − S₁ = [1−1/16] − [1−1/4] = 15/16 − 12/16 = 3/16."}, {"id": 54, "topic": "Series & Sequences", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2013, 2015, 2020, 2021, 2022, 2023", "stem": "Given uₙ represents the nth term of a sequence, which of the following converges?", "opts": ["uₙ = (5−3n)/(2−n)", "uₙ = 3n−4", "uₙ = 5(4/3)ⁿ", "uₙ = 2(−1)ⁿ⁻¹"], "ans": "A", "explain": "As n→∞: (5−3n)/(2−n) → (−3)/(−1) = 3. Converges to 3. All other options diverge or oscillate."}, {"id": 55, "topic": "Series & Sequences", "freq": "🔥🔥🔥 Appears every year", "years": "2013, 2020, 2021, 2023", "stem": "Given Sₙ = Σ(i=1 to n)[1/i − 1/(i+1)], then lim(n→∞) Sₙ is", "opts": ["0", "2/3", "1", "∞"], "ans": "C", "explain": "Telescoping: Sₙ = 1 − 1/(n+1) → 1 as n→∞."}, {"id": 56, "topic": "Series & Sequences", "freq": "🔥🔥 Repeated", "years": "2020, 2021, 2022, 2023", "stem": "The coefficient of x⁴ in the Taylor series expansion of f(x) = cos x about x = 0 is", "opts": ["1/2", "1/4", "1/12", "1/24"], "ans": "D", "explain": "cos x = 1 − x²/2! + x⁴/4! − ... Coefficient of x⁴ = 1/4! = 1/24."}, {"id": 57, "topic": "Series & Sequences", "freq": "🔥🔥 Repeated", "years": "2020, 2021, 2022, 2023", "stem": "The THIRD term in the power series expansion of (1+x)^(−1/2), |x| < 1, is", "opts": ["−(3/8)x²", "−(1/8)x²", "(1/8)x²", "(3/8)x²"], "ans": "D", "explain": "Using binomial: 1 + (−½)x + [(−½)(−3/2)/2!]x² = 1 − x/2 + (3/8)x². Third term = (3/8)x²."}, {"id": 58, "topic": "Series & Sequences", "freq": "🔥🔥 Repeated", "years": "2009, 2013, 2015, 2016", "stem": "For −1 < 2n < 1, Σ(r=0 to ∞)(2n)ʳ =", "opts": ["2/(1−n)", "1/(1−2n)", "2n/(1+2n)", "2n/(1−2n)"], "ans": "B", "explain": "Geometric sum with first term 1, ratio 2n: S = 1/(1−2n)."}, {"id": 59, "topic": "Series & Sequences", "freq": "🔥🔥 Repeated", "years": "2013, 2020, 2021, 2022, 2023", "stem": "The equation x³ − x − 3 = 0 has one real positive root in the interval (n, n+1). The value of n is", "opts": ["1", "2", "3", "4"], "ans": "A", "explain": "f(1) = 1−1−3 = −3 < 0. f(2) = 8−2−3 = 3 > 0. Sign change → root in (1,2), so n = 1."}, {"id": 60, "topic": "Series & Sequences", "freq": "🔥🔥 Repeated", "years": "2020, 2021, 2022, 2023", "stem": "A suitable Newton-Raphson iteration for e²ˣ + 4x − 5 = 0 is", "opts": ["[e^(2xₙ)(2xₙ+1)−5]/[2e^(2xₙ)+4]", "[e^(2xₙ)(2xₙ−1)−5]/[2e^(2xₙ)+4]", "[e^(2xₙ)(2xₙ+1)+5]/[2e^(2xₙ)+4]", "[e^(2xₙ)(2xₙ−1)+5]/[2e^(2xₙ)+4]"], "ans": "D", "explain": "xₙ₊₁ = xₙ − f/f'. f = e²ˣ+4x−5, f' = 2e²ˣ+4. Simplifying xₙ − (e^(2xₙ)+4xₙ−5)/(2e^(2xₙ)+4) gives option D."}, {"id": 61, "topic": "Complex Numbers", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2015, 2020, 2021, 2022, 2023", "stem": "The value of (cos π/4 + i sin π/4)⁴ is", "opts": ["−4", "−1", "1", "4"], "ans": "B", "explain": "De Moivre: (cos π/4 + i sin π/4)⁴ = cos(π) + i sin(π) = −1."}, {"id": 62, "topic": "Complex Numbers", "freq": "🔥🔥🔥 Appears every year", "years": "2021, 2022, 2023", "stem": "The quadratic equation with roots 2 ± i√3 is", "opts": ["x²−4x+1=0", "x²+4x−7=0", "x²−4x+7=0", "x²+4x−1=0"], "ans": "C", "explain": "Sum = 4. Product = (2+i√3)(2−i√3) = 4+3 = 7. Equation: x² − 4x + 7 = 0."}, {"id": 63, "topic": "Complex Numbers", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2021, 2022, 2023", "stem": "Given z = −1 + √3 i, the exponential form of z is", "opts": ["2e^(πi/6)", "2e^(πi/3)", "2e^(5πi/6)", "2e^(2πi/3)"], "ans": "D", "explain": "|z| = 2. arg(z) = π − arctan(√3) = π − π/3 = 2π/3. So z = 2e^(2πi/3)."}, {"id": 64, "topic": "Complex Numbers", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2020, 2021, 2022, 2023", "stem": "The principal value of the argument of −2 + 2i is", "opts": ["−3π/4", "−π/4", "π/4", "3π/4"], "ans": "D", "explain": "2nd quadrant: arg = π − arctan(2/2) = π − π/4 = 3π/4."}, {"id": 65, "topic": "Complex Numbers", "freq": "🔥🔥 Repeated", "years": "2022, 2023", "stem": "z̄ is the conjugate of z. Which are ALWAYS true? I.|z̄|=|z|  II.arg z = arg z̄  III.zz̄ is real", "opts": ["I and II only", "I and III only", "II and III only", "I, II and III"], "ans": "B", "explain": "|z̄| = |z| ✓. arg z̄ = −arg z ✗. zz̄ = |z|² ∈ ℝ ✓. Answer: I and III only."}, {"id": 66, "topic": "Complex Numbers", "freq": "🔥🔥 Repeated", "years": "2021, 2022, 2023", "stem": "The expression i[(2+i)² − (2−i)²] is equal to", "opts": ["−8", "−4", "4i", "8i"], "ans": "A", "explain": "(2+i)² − (2−i)² = (3+4i) − (3−4i) = 8i. Multiply by i: 8i² = −8."}, {"id": 67, "topic": "Complex Numbers", "freq": "🔥🔥 Repeated", "years": "2009, 2016, 2021", "stem": "The locus of z given |z − 1 − 2i| = 3 describes a circle with", "opts": ["centre (−1,−2), radius 3", "centre (−1,−2), radius 9", "centre (1,2), radius 3", "centre (1,2), radius 9"], "ans": "C", "explain": "|z − (1+2i)| = 3. Distance from z to point (1,2) = 3. Centre (1,2), radius 3."}, {"id": 68, "topic": "Calculus", "freq": "🔥🔥🔥 Appears every year", "years": "2020, 2021, 2022, 2023", "stem": "The derivative of y = ln|cos x / sin x| with respect to x is", "opts": ["tan x / sin²x", "−sec x cosec x", "−1/sin²x", "cot x"], "ans": "B", "explain": "= ln|cos x| − ln|sin x|. d/dx = −tan x − cot x = −(sin²x+cos²x)/(sin x cos x) = −1/(sin x cos x) = −sec x cosec x."}, {"id": 69, "topic": "Calculus", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2013, 2020", "stem": "∫ sec²x / (2 tan x) dx =", "opts": ["(1/2)ln|tan x| + c", "2ln|sec x| + c", "(1/2)ln|sec²x| + c", "2ln|tan x| + c"], "ans": "A", "explain": "Let u = tan x, du = sec²x dx. Integral = ∫(1/2u)du = (1/2)ln|u| + c = (1/2)ln|tan x| + c."}, {"id": 70, "topic": "Calculus", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2020, 2021, 2022, 2023", "stem": "d/dx [cos⁻¹(x/2)] is equal to", "opts": ["−1/√(4−x²)", "−2/√(4−x²)", "−2√(4−x²)", "−√(4−x²)"], "ans": "A", "explain": "d/dx[cos⁻¹(u)] = −1/√(1−u²) × du/dx. With u = x/2: = −1/√(1−x²/4) × (1/2) = −1/√(4−x²)."}, {"id": 71, "topic": "Calculus", "freq": "🔥🔥🔥 Appears every year", "years": "2009, 2013, 2020, 2021, 2022, 2023", "stem": "∫ 1/(1+9x²) dx is", "opts": ["(1/9)tan⁻¹x + c", "(1/3)tan⁻¹(3x) + c", "(1/3)tan⁻¹(x/3) + c", "(1/9)tan⁻¹(3x) + c"], "ans": "B", "explain": "Let u = 3x, du = 3dx. ∫1/(1+u²)(du/3) = (1/3)tan⁻¹(u) + c = (1/3)tan⁻¹(3x) + c."}, {"id": 72, "topic": "Calculus", "freq": "🔥🔥 Repeated", "years": "2020, 2021, 2022, 2023", "stem": "If dy/dx = 2xy, then d²y/dx² at the point (1, 2) is", "opts": ["6", "8", "12", "16"], "ans": "C", "explain": "d²y/dx² = d/dx(2xy) = 2y + 2x(dy/dx) = 2y + 2x(2xy) = 2y + 4x²y. At (1,2): 2(2) + 4(1)²(2) = 4 + 8 = 12."}, {"id": 73, "topic": "Calculus", "freq": "🔥🔥 Repeated", "years": "2020, 2021, 2022, 2023", "stem": "The gradient of the tangent to x² + y² = 25 at the point (3, −4) is", "opts": ["−3/4", "−4/3", "3/4", "4/3"], "ans": "C", "explain": "Implicit differentiation: 2x + 2y(dy/dx) = 0 → dy/dx = −x/y. At (3,−4): −3/(−4) = 3/4."}, {"id": 74, "topic": "Calculus", "freq": "🔥🔥 Repeated", "years": "2009, 2020, 2021, 2022, 2023", "stem": "Given cos 2x = 1 − 2sin²x, ∫₀^π sin²(x/4) dx =", "opts": ["2−π", "π−2", "π/2−1", "1−π/2"], "ans": "C", "explain": "sin²(x/4) = (1−cos(x/2))/2. Integral = [x/2 − sin(x/2)]₀^π = π/2 − 1."}, {"id": 75, "topic": "Calculus", "freq": "🔥🔥 Repeated", "years": "2013, 2021, 2022, 2023", "stem": "If f(x) = ln 2x, then f″(x) =", "opts": ["2/x", "1/x²", "−2/x", "−1/x²"], "ans": "D", "explain": "f(x) = ln 2 + ln x. f′(x) = 1/x. f″(x) = −1/x²."}];
+
+const topicOrder = [
+  "Permutations & Combinations","Probability","Matrices",
+  "Differential Equations","Series & Sequences","Complex Numbers","Calculus"
+];
+
+const topicIcons = {
+  "Permutations & Combinations":"🎲","Probability":"📊","Matrices":"🔢",
+  "Differential Equations":"∫","Series & Sequences":"∑","Complex Numbers":"ℂ","Calculus":"∂"
+};
+
+let state = {};  // qid -> {selected, checked}
+let currentFilter = 'All';
+
+function buildUI() {
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+
+  const byTopic = {};
+  QUESTIONS.forEach(q => {
+    if (!byTopic[q.topic]) byTopic[q.topic] = [];
+    byTopic[q.topic].push(q);
+  });
+
+  topicOrder.forEach(topic => {
+    if (!byTopic[topic]) return;
+    const qs = byTopic[topic];
+    const sec = document.createElement('div');
+    sec.className = 'topic-section';
+    sec.dataset.topic = topic;
+
+    sec.innerHTML = `<div class="topic-heading">
+      <span class="topic-icon">${topicIcons[topic]}</span>
+      <span class="topic-name">${topic}</span>
+      <span class="topic-count">${qs.length} questions</span>
+    </div>`;
+
+    qs.forEach(q => {
+      sec.appendChild(buildCard(q));
+    });
+    main.appendChild(sec);
+  });
+  updateProgress();
+}
+
+function buildCard(q) {
+  const card = document.createElement('div');
+  card.className = 'q-card';
+  card.id = `card-${q.id}`;
+  card.dataset.topic = q.topic;
+
+  const labels = ['A','B','C','D'];
+  const optsHTML = q.opts.map((opt, i) => `
+    <button class="opt-btn" id="opt-${q.id}-${labels[i]}"
+      onclick="selectOpt(${q.id}, '${labels[i]}')"
+      data-val="${labels[i]}">
+      <span class="opt-label">${labels[i]}</span>
+      <span>${opt}</span>
+    </button>`).join('');
+
+  card.innerHTML = `
+    <div class="q-header">
+      <span class="q-num">Q${q.id}</span>
+      <div class="q-meta">
+        <div class="q-freq">${q.freq}</div>
+        <div class="q-years">📅 ${q.years}</div>
+      </div>
+      <span class="result-badge" id="badge-${q.id}"></span>
+    </div>
+    <div class="q-body">
+      <div class="q-stem">${q.stem}</div>
+      <div class="opts-grid">${optsHTML}</div>
+      <div class="q-actions">
+        <button class="check-btn" id="check-${q.id}" onclick="checkOne(${q.id})" disabled>Check Answer</button>
+      </div>
+      <div class="explain-box" id="explain-${q.id}">${q.explain}</div>
+    </div>`;
+
+  return card;
+}
+
+function selectOpt(qid, val) {
+  if (state[qid] && state[qid].checked) return;
+  if (!state[qid]) state[qid] = {};
+  state[qid].selected = val;
+
+  // Update button styles
+  const labels = ['A','B','C','D'];
+  labels.forEach(l => {
+    const btn = document.getElementById(`opt-${qid}-${l}`);
+    btn.classList.toggle('selected', l === val);
+  });
+
+  document.getElementById(`check-${qid}`).disabled = false;
+  updateProgress();
+}
+
+function checkOne(qid) {
+  const q = QUESTIONS.find(x => x.id === qid);
+  if (!state[qid] || !state[qid].selected) return;
+  state[qid].checked = true;
+
+  const sel = state[qid].selected;
+  const correct = q.ans;
+  const labels = ['A','B','C','D'];
+
+  labels.forEach(l => {
+    const btn = document.getElementById(`opt-${qid}-${l}`);
+    btn.disabled = true;
+    btn.classList.remove('selected');
+    if (l === correct) btn.classList.add('correct');
+    else if (l === sel && sel !== correct) btn.classList.add('wrong');
+  });
+
+  const badge = document.getElementById(`badge-${qid}`);
+  if (sel === correct) {
+    badge.textContent = '✓ Correct';
+    badge.className = 'result-badge correct';
+  } else {
+    badge.textContent = '✗ Wrong';
+    badge.className = 'result-badge wrong';
+  }
+
+  document.getElementById(`explain-${qid}`).classList.add('show');
+  document.getElementById(`check-${qid}`).disabled = true;
+  updateProgress();
+}
+
+function submitAll() {
+  QUESTIONS.forEach(q => {
+    if (state[q.id] && state[q.id].selected && !state[q.id].checked) {
+      checkOne(q.id);
+    }
+  });
+
+  const checked = QUESTIONS.filter(q => state[q.id] && state[q.id].checked);
+  const correct = checked.filter(q => state[q.id].selected === q.ans);
+  const pct = checked.length > 0 ? Math.round(correct.length / checked.length * 100) : 0;
+
+  document.getElementById('modalScore').textContent = correct.length;
+  document.getElementById('modalTotal').textContent = checked.length;
+
+  let msg = '';
+  if (pct >= 80) msg = '🎉 Excellent work! You are well prepared.';
+  else if (pct >= 60) msg = '👍 Good effort. Review the ones you missed.';
+  else if (pct >= 40) msg = '📖 Keep studying — focus on the 🔥🔥🔥 topics.';
+  else msg = '💪 More practice needed. Use the topic filters to focus.';
+  document.getElementById('modalMsg').textContent = msg + ` (${pct}%)`;
+
+  document.getElementById('scoreModal').classList.add('show');
+}
+
+function resetAll() {
+  state = {};
+  buildUI();
+  filterTopic(currentFilter);
+}
+
+function filterTopic(topic) {
+  currentFilter = topic;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(topic) || (topic === 'All' && b.textContent === 'All (75)'));
+  });
+
+  document.querySelectorAll('.q-card').forEach(card => {
+    if (topic === 'All' || card.dataset.topic === topic) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  document.querySelectorAll('.topic-section').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.q-card')].some(c => !c.classList.contains('hidden'));
+    sec.style.display = visible ? '' : 'none';
+  });
+}
+
+function updateProgress() {
+  const total = QUESTIONS.length;
+  const answered = QUESTIONS.filter(q => state[q.id] && state[q.id].selected).length;
+  const checked = QUESTIONS.filter(q => state[q.id] && state[q.id].checked).length;
+  const correct = QUESTIONS.filter(q => state[q.id] && state[q.id].checked && state[q.id].selected === q.ans).length;
+
+  document.getElementById('progressFill').style.width = (answered/total*100) + '%';
+  document.getElementById('answeredPill').textContent = `${answered} / ${total} answered`;
+  document.getElementById('liveScore').textContent = `Score: ${correct}/${checked}`;
+}
+
+buildUI();
+</script>
+</body>
+</html>
